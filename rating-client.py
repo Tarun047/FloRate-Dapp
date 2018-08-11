@@ -3,6 +3,8 @@ from tkinter import Tk,END,Button,Label,Frame,Entry,messagebox,Message,Text,NSEW
 import Transaction
 import DataCenter
 from SF import VerticalScrolledFrame
+from os.path import expanduser
+from glob import glob
 
 class Application:
     """The main application GUI Window."""
@@ -10,6 +12,10 @@ class Application:
     
         self.master = master
         self.Frame = Frame(self.master)
+        try:
+            self.config = open(glob(expanduser('~/.flo/*.conf'))[0])
+        except:
+            messagebox.showerror("Configuration Error","Configuration File is corrupt")
         self.LEVEL ={
             1: 'unsatisfactory',
             2: 'satisfactory',
@@ -17,6 +23,10 @@ class Application:
             4:  'Exceed expectations',
             5:  'Exceptional'
             }
+        for line in self.config:
+            if "rpcuser" in line:
+                self.user_id = line[8:-1] 
+                break
     
     
     def main(self):
@@ -67,17 +77,30 @@ class Application:
         self.Sub.grid(row=1,columnspan=2,pady=16,padx=16,sticky=NSEW)
         self.LBL = Label(self.IS,text="Make a search and results will be displayed here:")
         self.LBL.grid(row=2,columnspan=2)
-        self.Text = Text(self.IS,height=30,width=40,state='disabled')
+        self.Text = Text(self.IS,height=20,width=40,state='disabled')
         self.TextScroll = Scrollbar(self.Text,orient=VERTICAL)
         self.Text.config(yscrollcommand=self.TextScroll.set)
         self.TextScroll.config(command=self.Text.yview)
         self.Text.grid(row=3,columnspan=2,padx=16,pady=16)
+        self.findMyRating = Button(self.IS,text="Find My Rating",command = self.findRating)
+        self.findMyRating.grid(row=4,padx=8,pady=8)
         self.BackButton = Button(self.IS,text="Back",command=self.main)
-        self.BackButton.grid(row=4,column=0)
+        self.BackButton.grid(row=5,column=0)
         self.QUIT = Button(self.IS,command=self.master.destroy,text="QUIT")
-        self.QUIT.grid(row=4,column=1)
+        self.QUIT.grid(row=5,column=1)
     
-    
+    def findRating(self):
+        """
+        Method name: findRating.
+
+        Method use: Driver to get Intern specific rating from all the ratings.
+        """
+        for data in self.Text.get("1.0",END).split('\n'):
+            if self.user_id in data:
+                messagebox.showinfo("Rating Information","Your Rating is: \n"+data)
+                return
+
+            
     def ratingResults(self):
         """
         Method name: ratingResults.
@@ -104,12 +127,15 @@ class Application:
                 return
             recv = Transaction.readDatafromBlockchain(self.txid)
         except:
-            messagebox.showwarning("NetworkError","Make Sure FLO-Core is running")
+            messagebox.showerror("Error","Make sure FLO Core Wallet is running and the Transaction id is correct")
             self.TXE.configure(state='normal')
             self.TXE.delete(0,'end')
             self.Text.configure(state='normal')
             self.Text.delete(1.0,'end')
             self.Text.configure(state='disabled')
+            self.IS.destroy()
+            self.internWindow()
+            return 
         pt = bytes.fromhex(recv).decode()
         lines = pt.split('\n')
         self.Text.configure(state="normal")
@@ -118,7 +144,10 @@ class Application:
             if line:
                 num = line.split()[1]
                 num = int(float(num))+1
-                self.Text.insert('1.0',line+" "+self.LEVEL[num]+"\n")
+                try:
+                    self.Text.insert('1.0',line+" "+self.LEVEL[num]+"\n")
+                except:
+                    self.Text.insert('1.0',"INVALID DATA ENTERED\n")
         self.Text.configure(state='disabled')
         
     #Intern Section Ends Here
@@ -178,18 +207,22 @@ class Application:
         DataCenter.checkState()
         self.RW = Frame(self.master)
         self.RW.pack()
+        self.IDLBL = Label(self.RW,text="Intern's Data\n(Sno  Intern Name  Intern User Name)")
+        self.IDLBL.grid(row=0,column=1,padx=8,pady=8)
+        self.RTLBL = Label(self.RW,text="Rating Data\n( Intern User Name  Rating)")
+        self.RTLBL.grid(row=0,column=4,padx=8,pady=8)
         self.IDLB = Listbox(self.RW,width=50,height=20,selectmode=MULTIPLE)
         self.scrollbar = Scrollbar(self.IDLB, orient=VERTICAL)
         self.IDLB.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.IDLB.yview)
         self.populateListBox()
-        self.IDLB.grid(row=0,column=1,padx=16,pady=16,sticky=NSEW)
+        self.IDLB.grid(row=1,column=1,padx=16,pady=16,sticky=NSEW)
         self.loadImg = PhotoImage(file="AddBtn.gif")
         self.remImg = PhotoImage(file="RenmBtn.gif")
         self.removeIntern = Button(self.RW,height=48,width=48,image=self.remImg,command=self.removeData)
-        self.removeIntern.grid(row=0,column=2,padx=8,pady=8)
+        self.removeIntern.grid(row=1,column=2,padx=8,pady=8)
         self.addIntern = Button(self.RW,text="",height=48,width=48,image=self.loadImg,command = self.loadData)
-        self.addIntern.grid(row=0,column=3,padx=8,pady=8)
+        self.addIntern.grid(row=1,column=3,padx=8,pady=8)
         self.RL = Listbox(self.RW,width=50,height=20,selectmode=MULTIPLE)
         for usr,rat in DataCenter.retrieveRating():
             self.RL.insert(END,usr + " "+str(rat))
@@ -200,7 +233,7 @@ class Application:
         self.RLscroll = Scrollbar(self.RL, orient=VERTICAL)
         self.RL.config(yscrollcommand=self.RLscroll.set)
         self.RLscroll.config(command=self.RL.yview)
-        self.RL.grid(row=0,column=4,padx=16,pady=16)
+        self.RL.grid(row=1,column=4,padx=16,pady=16)
         self.createIntern = Button(self.RW,text="Add a new Intern",command = self.newIntern)
         self.createIntern.grid(row=2,column=1,padx=8,pady=4)
         self.DeleteIntern = Button(self.RW,text="Remove an Existing Intern",command=self.removeExistingIntern)
@@ -282,7 +315,10 @@ class Application:
         self.TMPEN=[]
         if process:
             for name,rating in process:
-                DataCenter.insertRating(name,rating.get())
+                if float(rating.get())>=0 and float(rating.get())<=5:
+                    DataCenter.insertRating(name,rating.get())
+                else:
+                    DataCenter.insertRating(name,-1)
             self.createRatings()
             return
         if not self.IDLB.curselection():
