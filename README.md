@@ -32,5 +32,5 @@ pip install python-tk
 </code>
 or 
 <code>
-pip install python3-tk (Incase of Multiple Python versions)
-</code>
+pip install python3-tk
+</code>(Incase of Multiple Python versions)
