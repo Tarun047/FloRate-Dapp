@@ -24,5 +24,13 @@ Enter the Ratings and submit
   </li>
  </ul>
 
-
-
+<b>Installation Procedure</b><br />
+Install Python 3.4+ on both Intern and Employee machine.<br />
+TKinter GUI Driver is must to run the DApp, to install it open a command line and type.<br /> 
+<code>
+pip install python-tk
+</code>
+or 
+<code>
+pip install python3-tk (Incase of Multiple Python versions)
+</code>
