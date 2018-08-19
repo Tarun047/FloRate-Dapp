@@ -10,7 +10,8 @@ The Intern Create Ratings window contains 2 parts<br />
   <ul>
     <li>
       Intern Data: Here we choose the required Interns to be rated and press the right arrow Button<br />We then 
-Enter the Ratings and submit
+Enter the Ratings and submit.
+      Note: The application is SQLITE 3 DB Backed so the addition of new interns is retained to save time
     </li>
     <li>
       Rating Data: Here we find all the assigned Ratings displayed and when we find they are good we finalize them by pressing on finalize button
