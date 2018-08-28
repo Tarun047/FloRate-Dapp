@@ -7,8 +7,8 @@ To execute on linux we can run the executable by opeining dist folder in a termi
 <code>
   chmod +x rating-client
 </code><br />
-Now we can directly start the application by a simple double clicking the rating-client executable file from the dist folder
-After Starting GUI choose the role:<br />
+Now we can directly start the application by a simple double clicking the rating-client executable file from the dist folder.
+<br />After Starting GUI choose the role:<br />
 <ul>
   <li>
     If role is Employee We need to create Ratings so that they are in desired writting format.<br />
