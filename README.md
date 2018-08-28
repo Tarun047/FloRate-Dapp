@@ -2,6 +2,13 @@
 This D-App is based on Flo  Block Chain and is used to communicate the progress of Interns in the form of Rating.<br />
 <b>Usage</b><br />
 To use the application we use the command python3 rating-client.py<br />
+or<br />
+To execute on linux we can run the executable by opeining dist folder in a terminal and then type the following commands<br />
+<code>
+  chmod +x rating-client
+  ./rating-client
+</code>
+Now we can directly start the application by a simple double clicking the rating-client executable file from the dist folder
 After Starting GUI choose the role:<br />
 <ul>
   <li>
