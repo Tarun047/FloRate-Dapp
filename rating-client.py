@@ -5,11 +5,12 @@ import DataCenter
 from SF import VerticalScrolledFrame
 from os.path import expanduser
 from glob import glob
-
+import os
+import sys
 class Application:
     """The main application GUI Window."""
     def __init__(self,master=None):
-    
+
         self.master = master
         self.Frame = Frame(self.master)
         try:
@@ -25,15 +26,15 @@ class Application:
             }
         for line in self.config:
             if "rpcuser" in line:
-                self.user_id = line[8:-1] 
+                self.user_id = line[8:-1]
                 break
-    
-    
+
+
     def main(self):
         """
         Method name: main.
 
-        Method use: The program starts the main GUI of the Rating System. 
+        Method use: The program starts the main GUI of the Rating System.
         """
         try:
             self.IS.destroy()
@@ -56,7 +57,7 @@ class Application:
         contentText = "\n\nWhat is this?\nThis app lets us to rate Interns through the FLO blockchain .\n\nThis is a zero knowledge application.\n\nHow to work ?\n\n Choose if you are an Intern or Employeer\n\n"+"An Intern's work would be to enter the Transaction id in the given field and get rating\n\nAn Empolyee must enter the transaction address and write all the intern data to it "
         Context = Message(self.MF, text = contentText)
         Context.grid(column = 1, columnspan =2)
-    
+
     #Intern Section Starts
     def internWindow(self):
         """
@@ -88,7 +89,7 @@ class Application:
         self.BackButton.grid(row=5,column=0)
         self.QUIT = Button(self.IS,command=self.master.destroy,text="QUIT")
         self.QUIT.grid(row=5,column=1)
-    
+
     def findRating(self):
         """
         Method name: findRating.
@@ -100,7 +101,7 @@ class Application:
                 messagebox.showinfo("Rating Information","Your Rating is: \n"+data)
                 return
 
-            
+
     def ratingResults(self):
         """
         Method name: ratingResults.
@@ -135,7 +136,7 @@ class Application:
             self.Text.configure(state='disabled')
             self.IS.destroy()
             self.internWindow()
-            return 
+            return
         pt = bytes.fromhex(recv).decode()
         lines = pt.split('\n')
         self.Text.configure(state="normal")
@@ -149,11 +150,11 @@ class Application:
                 except:
                     self.Text.insert('1.0',"INVALID DATA ENTERED\n")
         self.Text.configure(state='disabled')
-        
+
     #Intern Section Ends Here
 
     #Employee Section Starts Here
-    
+
     def employeeWindow(self,text=None):
         """
             Method name: employeeWindow.
@@ -161,15 +162,15 @@ class Application:
             Method use: Provide a GUI for employee Window.
 
             Positional Arguments:
-                
+
                 Arguement Name: text.
-                Argument Use: To provide the neccessary details to the GUI about rating data 
+                Argument Use: To provide the neccessary details to the GUI about rating data
                               retrieved from the finalizeRatings method.
         """
 
         try:
             self.MF.destroy()
-            self.RW.destroy() 
+            self.RW.destroy()
         except:
             pass
         self.EM = Frame(self.master)
@@ -192,8 +193,18 @@ class Application:
         self.BackButton.grid(row=5,column=0)
         self.QUIT = Button(self.EM,command=self.master.destroy,text="QUIT")
         self.QUIT.grid(row=5,column=1)
-    
-    
+
+
+    def resource_path(self,relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
+
+
     def createRatings(self):
         """
             Method name: createRaNSEWtings.
@@ -217,8 +228,8 @@ class Application:
         self.scrollbar.config(command=self.IDLB.yview)
         self.populateListBox()
         self.IDLB.grid(row=1,column=1,padx=16,pady=16,sticky=NSEW)
-        self.loadImg = PhotoImage(file="AddBtn.gif")
-        self.remImg = PhotoImage(file="RenmBtn.gif")
+        self.loadImg = PhotoImage(file=self.resource_path("AddBtn.gif"))
+        self.remImg = PhotoImage(file=self.resource_path("RenmBtn.gif"))
         self.removeIntern = Button(self.RW,height=48,width=48,image=self.remImg,command=self.removeData)
         self.removeIntern.grid(row=1,column=2,padx=8,pady=8)
         self.addIntern = Button(self.RW,text="",height=48,width=48,image=self.loadImg,command = self.loadData)
@@ -240,12 +251,12 @@ class Application:
         self.DeleteIntern.grid(row=3,column=1,padx=8,pady=4)
         self.finalBtn = Button(self.RW,text="Finalize",command = self.finalizeRatings)
         self.finalBtn.grid(row=3,column=4)
-    
-    
+
+
     def newIntern(self):
         """
         Method name: newIntern.
-        
+
         Method use: GUI for the creation of new Intern
         """
 
@@ -264,7 +275,7 @@ class Application:
         self.AddBtn = Button(self.NE,text="Add Intern",command = self.CIB)
         self.AddBtn.grid(row=2,padx=8,pady=8)
 
-    
+
     def finalizeRatings(self):
         """
             Method Name: finalizeRatings.
@@ -276,7 +287,7 @@ class Application:
         Rating_Str = ""
         for usr,rat in DataCenter.retrieveRating():
             Rating_Str += usr+" "+str(rat)+"\n"
-        
+
         if not messagebox.askyesno("Revive Data","Should you want the rating data to be kept"):
             DataCenter.clearRatings()
         self.RW.destroy()
@@ -301,8 +312,8 @@ class Application:
             messagebox.showinfo("Success","New Intern Sucessfully added")
             self.NE.destroy()
             self.createRatings()
-    
-    
+
+
     def loadData(self,process=None):
         """
         Method name: loadData.
@@ -338,7 +349,7 @@ class Application:
             self.TMPEN[row-1].pack()
         self.Sub = Button(self.RAT.interior,command=lambda :self.loadData(zip(self.ratList,self.TMPEN)),text="submit")
         self.Sub.pack(pady=8)
-        
+
 
     def removeData(self):
         """
@@ -371,7 +382,7 @@ class Application:
     def removeExistingIntern(self):
         """
         Method Name: removeExistingIntern
-        
+
         Method use: To remove an Existing Intern from the DataBase
         """
 
@@ -391,7 +402,7 @@ class Application:
 
         Method use: To post the results on to the Block Chain
         """
-        
+
         self.addr = self.TRE.get()
         self.ratingData = self.Text.get('1.0', END)
         try:
