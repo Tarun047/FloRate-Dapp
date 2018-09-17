@@ -4,9 +4,9 @@ block_cipher = None
 
 
 a = Analysis(['rating-client.py'],
-             pathex=['/home/tarun/Downloads/Compressed/FloRate-Dapp-master'],
+             pathex=['/home/tarun/FloRate-Dapp'],
              binaries=[],
-             datas=[('/home/tarun/FloRate-Dapp-master/AddBtn.gif',''),('/home/tarun/FloRate-Dapp-master/RenmBtn.gif','')],
+             datas=[('/home/tarun/FloRate-Dapp/AddBtn.gif',''),('/home/tarun/FloRate-Dapp/RenmBtn.gif','')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -26,4 +26,4 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           runtime_tmpdir=None,
-          console=False , manifest='rating-client.spec')
+          console=True )

@@ -9,17 +9,17 @@ def writeDatatoBlockchain(text,receiver,amt):
     Function use: write the recieved Data to the Block-Chain with a specified amount amt charge
     """
 
-    txid = subprocess.check_output(["flo-cli","--testnet", "sendtoaddress",receiver,str(amt),'""','""',"true","false","10",'UNSET',str(text)])
+    txid = subprocess.check_output(["flo-cli", "sendtoaddress",receiver,str(amt),'""','""',"true","false","10",'UNSET',str(text)])
     txid = str(txid)
     txid = txid[2:-3]
     return txid
 
 def readUnitFromBlockchain(txid):
     #Reads Unit Data from Block Chain
-    rawtx = subprocess.check_output(["flo-cli","--testnet", "getrawtransaction", str(txid)])
+    rawtx = subprocess.check_output(["flo-cli", "getrawtransaction", str(txid)])
     rawtx = str(rawtx)
     rawtx = rawtx[2:-3]
-    tx = subprocess.check_output(["flo-cli","--testnet", "decoderawtransaction", str(rawtx)])
+    tx = subprocess.check_output(["flo-cli", "decoderawtransaction", str(rawtx)])
     content = json.loads(tx)
     text = content['floData']
     return text
